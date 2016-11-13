@@ -59,7 +59,7 @@ public class WordCount extends Configured implements Tool {
   public int run(String[] args) throws Exception {
     // just to make configuration readable
     PropertyConfigurator.configure(getClass().getClassLoader().getResourceAsStream("log4j.properties"));
-    
+
     Configuration conf = getConf();
     Job job = Job.getInstance(conf, "word count");
     job.setJarByClass(WordCount.class);
@@ -73,7 +73,13 @@ public class WordCount extends Configured implements Tool {
     job.setOutputFormatClass(TextOutputFormat.class);
     FileInputFormat.addInputPath(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
-    return job.waitForCompletion(true) ? 0 : 1;
+
+    long started = System.currentTimeMillis();
+    int ret = job.waitForCompletion(true) ? 0 : 1;
+    long finished = System.currentTimeMillis();
+
+    System.out.println("Time taken: " + (finished - started));
+    return ret;
   }
   public static void main(String[] args) throws Exception {
 
